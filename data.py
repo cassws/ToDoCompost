@@ -16,4 +16,9 @@ def checkFile(fname):
     
     return importTaskList
 
-# add writeFile() function to save To Do items before close
+def writeFile(fname, data):
+    with open(fname, 'w') as writeFile:
+        for item in data:
+            if not item.isChecked:
+                writeFile.write(item.Label.text() + ',' + str(item.priority) + '\n')
+    print('Saved!')

@@ -12,11 +12,11 @@ last edited: January 2015
 import sys
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, 
     QTextEdit, QCheckBox, QPushButton, QGridLayout, QApplication)
-from data import checkFile
+from data import checkFile, writeFile
 
 # import checklist items from data.py
 
-SPACING = 10
+SPACING = 20
 FILENAME = 'taskList.txt'
 
 class Checklist(QWidget):
@@ -42,10 +42,12 @@ class Checklist(QWidget):
 
         # new ToDo button + text box
         buttonAdd = QPushButton("Add")
-        grid.addWidget(titleEdit, 1, 1)
+        buttonSave = QPushButton("Save")
         grid.addWidget(buttonAdd, 1, 0 )
+        grid.addWidget(buttonSave, 1, 2 )
+        grid.addWidget(titleEdit, 1, 1)
         buttonAdd.clicked.connect(lambda: self.addTask(titleEdit))
-
+        buttonSave.clicked.connect(lambda: writeFile(FILENAME, self.toDoArray))
 
         for i in range (0,len(self.toDoArray)):
             if i > SPACING - 2:
@@ -54,7 +56,7 @@ class Checklist(QWidget):
             grid.addWidget(box, i+2, 0)
             grid.addWidget(task, i+2, 1)
         self.setLayout(grid) 
-        self.setGeometry(300, 300, 600, 400)
+        self.setGeometry(300, 100, 600, 600)
         self.setWindowTitle('To Do Compost')    
         self.show()
         
@@ -71,7 +73,7 @@ class Checklist(QWidget):
     def addTask(self, editBar):
         barText = editBar.text()
         if barText:
-            print(barText)
+            print('New ToDo task: ' + barText)
             self.toDoArray.append(ToDoItem(barText))
             self.refreshToDos(self.layout())
             editBar.clear()
@@ -96,6 +98,7 @@ class ToDoItem(QWidget):
         self.isChecked = True
         self.CheckBox.deleteLater()
         self.Label.deleteLater()
+        print('Checked off ' + self.Label.text())
         # do special things when task is checked off!
 
 if __name__ == '__main__':
