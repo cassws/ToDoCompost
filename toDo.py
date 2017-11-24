@@ -19,47 +19,43 @@ from data import checkFile
 SPACING = 10
 FILENAME = 'taskList.txt'
 
-class Example(QWidget):
+class Checklist(QWidget):
     
     def __init__(self):
         super().__init__()
-        
+        self.toDoArray = self.loadToDoItems()
+
         self.initUI()
         
         
     def initUI(self):
         
         title = QLabel('Title')
-        author = QLabel('Author')
-        review = QLabel('Review')
-
         titleEdit = QLineEdit()
-        authorEdit = QLineEdit()
-        reviewEdit = QTextEdit()
 
-        grid = QGridLayout()
+        grid = QGridLayout(self)
         grid.setSpacing(SPACING)
 
         # creates an array of ToDoItem objects
         # based on file data
-        toDoArray = self.loadToDoItems()
 
-#        grid.addWidget(title, 1, 0)
+
+        # new ToDo button + text box
         buttonAdd = QPushButton("Add")
         grid.addWidget(titleEdit, 1, 1)
         grid.addWidget(buttonAdd, 1, 0 )
+        buttonAdd.clicked.connect(lambda: self.addTask(titleEdit))
 
-        for i in range (0,len(toDoArray)):
+
+        for i in range (0,len(self.toDoArray)):
             if i > SPACING - 2:
                 continue
-            box, task = toDoArray[i].CheckBox, toDoArray[i].Label
+            box, task = self.toDoArray[i].CheckBox, self.toDoArray[i].Label
             grid.addWidget(box, i+2, 0)
             grid.addWidget(task, i+2, 1)
-
-        
         self.setLayout(grid) 
         self.setGeometry(300, 300, 600, 400)
-        self.setWindowTitle('Review')    
+        self.setWindowTitle('To Do Compost')    
         self.show()
         
     def loadToDoItems(self):
@@ -72,6 +68,20 @@ class Example(QWidget):
             tdItemArray.append(ToDoItem(item[0]))
         return tdItemArray
 
+    def addTask(self, editBar):
+        barText = editBar.text()
+        if barText:
+            print(barText)
+            self.toDoArray.append(ToDoItem(barText))
+            self.refreshToDos(self.layout())
+            editBar.clear()
+
+    def refreshToDos(self, layout):
+        box, task = self.toDoArray[-1].CheckBox, self.toDoArray[-1].Label
+        layout.addWidget(box, layout.rowCount(), 0)
+        layout.addWidget(task, layout.rowCount()-1, 1)
+
+
 class ToDoItem(QWidget):
 
     def __init__(self, label, priority=1, isChecked=False, tags=[]):
@@ -80,13 +90,17 @@ class ToDoItem(QWidget):
         self.CheckBox = QCheckBox()
         self.Label = QLabel(label)
         self.isChecked = isChecked
+        self.CheckBox.stateChanged.connect(lambda: self.crossOffTask())
     
     def crossOffTask(self):
         self.isChecked = True
+        self.CheckBox.deleteLater()
+        self.Label.deleteLater()
         # do special things when task is checked off!
 
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
-    ex = Example()
+    app.processEvents()
+    cl = Checklist()
     sys.exit(app.exec_())
