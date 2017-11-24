@@ -15,8 +15,11 @@ class Garden():
                 else:
                     self.compost[l] = 1
         # for testing
+        self.animateGarden()
+    
+    def animateGarden(self):
         for item in self.compost:
-            print (item + ' has ' + str(self.compost[item]) + ' units of compost!')
+            print (item + ': ' + '*'*self.compost[item])
 
 # loadCompost()
 # generateGarden()
