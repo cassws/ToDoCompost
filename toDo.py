@@ -13,7 +13,7 @@ import sys
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, 
     QTextEdit, QCheckBox, QPushButton, QGridLayout, QApplication)
 from data import checkFile, writeFile
-
+from garden import Garden
 # import checklist items from data.py
 
 SPACING = 20
@@ -21,9 +21,11 @@ FILENAME = 'taskList.txt'
 
 class Checklist(QWidget):
     
-    def __init__(self):
+    def __init__(self, sessionGarden):
         super().__init__()
+        self.sessionGarden = sessionGarden
         self.toDoArray = self.loadToDoItems()
+
 
         self.initUI()
         
@@ -67,14 +69,14 @@ class Checklist(QWidget):
         tdItemArray = []
         rawTaskData = checkFile(FILENAME)
         for item in rawTaskData:
-            tdItemArray.append(ToDoItem(item[0]))
+            tdItemArray.append(ToDoItem(label = item[0], sessionGarden = self.sessionGarden))
         return tdItemArray
 
     def addTask(self, editBar):
         barText = editBar.text()
         if barText:
             print('New ToDo task: ' + barText)
-            self.toDoArray.append(ToDoItem(barText))
+            self.toDoArray.append(ToDoItem(label = barText, sessionGarden = self.sessionGarden))
             self.refreshToDos(self.layout())
             editBar.clear()
 
@@ -86,24 +88,26 @@ class Checklist(QWidget):
 
 class ToDoItem(QWidget):
 
-    def __init__(self, label, priority=1, isChecked=False, tags=[]):
+    def __init__(self, label, sessionGarden, priority=1, isChecked=False, tags=[]):
         self.priority = priority
         self.tags = tags
         self.CheckBox = QCheckBox()
         self.Label = QLabel(label)
         self.isChecked = isChecked
         self.CheckBox.stateChanged.connect(lambda: self.crossOffTask())
+        self.sessionGarden = sessionGarden
     
     def crossOffTask(self):
         self.isChecked = True
         self.CheckBox.deleteLater()
         self.Label.deleteLater()
         print('Checked off ' + self.Label.text())
-        # do special things when task is checked off!
+        self.sessionGarden.addCompost(self.Label.text())
 
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
     app.processEvents()
-    cl = Checklist()
+    mygarden = Garden()
+    cl = Checklist(mygarden)
     sys.exit(app.exec_())
