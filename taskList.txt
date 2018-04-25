@@ -1,7 +1,6 @@
-Read Josh e-mails,1
-Read Josh articles again,1
-Read relevant Tech & Texts stuff,1
-Develop three doable techniques,1
-Implement technique #1,1
 Implement technique #2,1
 Implement technique #3,1
+Replecate problem inputs for Django,1
+Understand the seq2seq code,1
+Update Spaceships repo for clarkdatalabs.github.io,1
+Ask Renee if she wants my 3DS,1

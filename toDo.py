@@ -58,7 +58,7 @@ class Checklist(QWidget):
             grid.addWidget(box, i+2, 0)
             grid.addWidget(task, i+2, 1)
         self.setLayout(grid) 
-        self.setGeometry(300, 100, 600, 600)
+        self.setGeometry(300, 100, 550, 600)
         self.setWindowTitle('To Do Compost')    
         self.show()
         
